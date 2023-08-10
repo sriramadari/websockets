@@ -9,25 +9,18 @@ This repository provides a basic introduction to WebSockets and demonstrates how
 - [Frontend Setup](#frontend-setup)
 - [Running the Example](#running-the-example)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## WebSocket Introduction
 
 WebSockets are a communication protocol that enables real-time, bidirectional, full-duplex communication between a client and a server over a single, persistent connection. This is in contrast to the traditional request-response model of HTTP, allowing for instantaneous data exchange and live updates.
 
-For a comprehensive introduction to WebSockets, including their benefits and key features, you can refer to the [WebSocket Introduction](websocket-introduction.md).
-
 ## Server Setup
 
-The server is implemented using the `express` framework and the `ws` library for WebSocket functionality. The `server.js` file contains the server-side code that handles WebSocket connections, messages, and disconnections.
-
-For detailed instructions on setting up the server and understanding the server-side code, refer to the [Server Setup](server-setup.md) guide.
+The server is implemented using the `express` framework and the `ws` library for WebSocket functionality. The `socket.js` file contains the server-side code that handles WebSocket connections, messages, and disconnections.
 
 ## Frontend Setup
 
-The frontend is a simple HTML file named `index.html` that provides an interface to send and receive messages to and from the WebSocket server. This basic interface demonstrates how the client can interact with the WebSocket connection.
-
-To understand how to set up the frontend and how the communication is established, see the [Frontend Setup](frontend-setup.md) guide.
+The frontend is a simple HTML file named `client.html` that provides an interface to send and receive messages to and from the WebSocket server. This basic interface demonstrates how the client can interact with the WebSocket connection.
 
 ## Running the Example
 
