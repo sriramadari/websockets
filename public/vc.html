@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Signaling Client</title>
+</head>
+<body>
+  <h1>WebRTC</h1>
+  <button id="startButton">Start</button>
+  <video id="localVideo" autoplay playsinline></video>
+  <video id="remoteVideo" autoplay playsinline></video>
+  <script type="module">
+    import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+    const socket = io("http://localhost:8080");
+
+    async function startLocalStream() {
+      try {
+        const constraints = { audio: true, video: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const localVideo = document.getElementById('localVideo');
+        localVideo.srcObject = stream;
+        await localVideo.play(); // Play the local video
+        setupPeerConnection(stream);
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+      }
+    }
+
+    function setupPeerConnection(localStream) {
+      const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+      const peerConnection = new RTCPeerConnection(configuration);
+
+      // Add local stream to peer connection
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
+
+      // Handle ICE candidate events
+      peerConnection.onicecandidate = event => {
+        if (event.candidate) {
+          socket.emit('ice-candidate', event.candidate);
+        }
+      };
+
+      // Handle remote stream tracks
+      peerConnection.ontrack = event => {
+        const remoteVideo = document.getElementById('remoteVideo');
+        if (!remoteVideo.srcObject) {
+          remoteVideo.srcObject = event.streams[0];
+          remoteVideo.play(); // Play the remote video
+        }
+      };
+
+      // ... (other peer connection setup code)
+      
+      // Assuming you have a function to create and send an offer
+      createAndSendOffer(peerConnection);
+    }
+
+    // Create and send an offer to the signaling server
+    async function createAndSendOffer(peerConnection) {
+      try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        
+        // Emit the offer to the signaling server
+        socket.emit('offer', offer);
+      } catch (error) {
+        console.error('Error creating and sending offer:', error);
+      }
+    }
+
+    // Start the local stream when a button is clicked
+    const startButton = document.getElementById('startButton');
+    startButton.addEventListener('click', () => {
+      startLocalStream();
+    });
+  </script>
+</body>
+</html>

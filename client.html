@@ -11,7 +11,25 @@
   <button id="sendButton">Send</button>
   <div id="output"></div>
   <script>
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3000/ws');
+    console.log(socket);
+
+    async function startCapture() {
+  try {
+    const constraints = { audio: true, video: true };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    console.log(stream);
+    const videoElement = document.createElement('video');
+    videoElement.srcObject = stream;
+    videoElement.pause();
+    document.body.appendChild(videoElement);
+  } catch (error) {
+    console.error('Error accessing media devices:', error);
+  }
+}
+
+startCapture();
+
 
     const output = document.getElementById('output');
     const messageInput = document.getElementById('message');
@@ -23,6 +41,7 @@
 
     socket.onmessage = (event) => {
       output.innerHTML += `<p>Server says: ${event.data}</p>`;
+      console.log(event);
     };
 
     socket.onclose = () => {
@@ -35,5 +54,6 @@
       messageInput.value = '';
     });
   </script>
+ 
 </body>
 </html>
